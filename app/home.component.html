@@ -1,0 +1,126 @@
+
+
+<div>
+    <p><button style="float: right;" *ngIf="!isEditing && !isSearching && !isAdding && !isMap" (click)="enableAdding()"> Add</button></p>  <p><button style="float: right;" *ngIf="!isEditing && !isSearching && !isAdding && !isMap" (click)="enableMap()"> Map</button></p>
+    <p><search  *ngIf="!isAdding && !isEditing && !isMap" [(names)]="name"></search></p>
+	 
+	<p><button  *ngIf="!isAdding && !isEditing && !isMap" (click)="enableSearching(name)"> Find</button></p>
+
+
+    
+    <table   rules=rows class="table" >
+			<thead *ngIf="!isEditing && !isAdding && !isMap">
+				
+				<tr>
+					<th style="background-color: rgba(255, 0, 0, 0.2);">ProductName</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.3);">Latitude</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.4);">Longitude</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.5);">Actions</th>
+				</tr>
+			</thead>
+			<tbody *ngIf="products.length === 0 && !isMap" >
+				<tr><td *ngIf="!isAdding" colspan="4">There are no products</td></tr>	
+			</tbody>
+
+			 <tbody *ngIf="!isEditing && !isSearching  && !isAdding  && !isMap" > 
+				<tr *ngFor="let product of products | orderBy : ['pname']">
+					<td >{{product.pname}}</td>
+					<td >{{product.lat}}</td>
+					<td >{{product.lng}}</td>
+					<td >
+						<button  (click)="enableEditing(product)"> Edit</button> <button   (click)="submitRemove(product)"><i  ></i> Delete</button>
+					</td>
+				</tr>	
+			</tbody>
+			
+  <tbody *ngIf="isSearching" >
+				<tr *ngFor="let product of products  | orderBy : ['pname']">
+					<td>{{product.pname}}</td>
+					<td>{{product.lat}}</td>
+					<td>{{product.lng}}</td>
+					<td>
+						<button  (click)="enableEditing(product)"> Edit</button> <button   (click)="submitRemove(product)"><i ></i> Delete</button>
+					</td>
+				</tr>	
+			</tbody> 
+
+<tbody *ngIf="isEditing">
+				<tr>
+					<td colspan="4">
+					<form class="form-inline" #form="ngForm" (ngSubmit)="submitEdit(product)">
+					   <div class="form-group">
+							 <input class="form-control" type="text" name="name" [(ngModel)]="product.pname" placeholder="Name" required>
+						</div>
+						<div class="form-group">
+							<input class="form-control" type="long int" name="latitude" [(ngModel)]="product.lat" placeholder="Latitude"  required>
+						</div>
+						<div  class="form-group">
+							<input class="form-control" type="long int" name="longitude" [(ngModel)]="product.lng" placeholder="Longitude"  min="0" required>
+						</div>
+							<button  type="submit" [disabled]="!form.form.valid"> Save</button>
+					</form>
+						<button (click)="cancelEditing()"> Cancel</button>
+					</td>
+				</tr>
+</tbody>
+		
+		 <form  *ngIf="isMap" >
+	<sebm-google-map 
+    [latitude]="9.9971"
+    [longitude]="76.3028"
+    [zoom]="13">
+    <div *ngFor="let product of products">
+      <sebm-google-map-marker [label]="product.pname" (markerClick)="updateDiv(product, infowindow)" 
+        *ngIf="product.lat"
+        [latitude]="product.lat"
+        [longitude]="product.lng">
+      
+        <sebm-google-map-info-window #infowindow [disableAutoPan]="true">{{ product.pname }}</sebm-google-map-info-window>
+      </sebm-google-map-marker>
+    
+    </div>
+   
+  </sebm-google-map>
+<button (click)="cancelMap()"> Cancel</button>
+ </form>
+
+   <form  *ngIf="isAdding" class="form-inline" [formGroup]="addProductForm" (ngSubmit)="submitAdd()">
+			<div  class="form-group">
+			    <input class="form-control" type="text" name="pname" formControlName="pname" placeholder="Name"  >
+		
+			</div>
+			<div class="form-group">
+				<input class="form-control" type="long int" name="lat" formControlName="lat" placeholder="Latitude"  >
+	
+			</div>
+			<div class="form-group">
+				<input class="form-control" type="long int" name="lng" formControlName="lng" placeholder="Longitude" >
+			</div>
+			
+		<button  type="submit" [disabled]="!addProductForm.valid"> Add</button>
+		 <button  (click)="cancelAdd()"> Cancel</button>
+		</form>
+		</table> 
+
+	     <button  *ngIf="isSearching"(click)="cancelSearch()"> Cancel</button> 
+	  
+	</div>
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
