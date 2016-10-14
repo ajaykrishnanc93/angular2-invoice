@@ -7,25 +7,36 @@ import {SearchComponent} from './search';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './home.component';
 import {OrderBy} from './pipes';
-import {ProductService} from './book.service';
+import {ProductService} from './product.service';
+import {VendorsComponent} from './vendors'
+import {ProductsComponent} from './products'
+import {CustomersComponent} from './customers'
+import {InvoiceComponent} from './invoice'
+import{InvoiceListComponent} from './invoiceList'
 
 
-import { AgmCoreModule } from 'angular2-google-maps/core';
+
+import { Ng2CompleterModule } from "ng2-completer";
+
 @NgModule({
     imports: [BrowserModule,
-    		  HttpModule,
+    		  HttpModule, Ng2CompleterModule,
     		  FormsModule,
     		  ReactiveFormsModule,
- RouterModule.forRoot([
-       { path: '', component:HomeComponent }
-      ]),
-    	 AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyDgtZl_6Gvo8qMPtS6GaWHYVTTBBy18fr0'
-    })	  ],
-    declarations: [AppComponent,SearchComponent,OrderBy,
-  
-    			   
-    			   HomeComponent],
+          
+          RouterModule.forRoot([
+       { path: '', component:HomeComponent },
+		   {path:'Vendors',component:VendorsComponent},
+           {path:'Customers',component:CustomersComponent},
+ {path:'Products',component:ProductsComponent},
+    {path:'Invoice',component:InvoiceComponent},
+    {path:'InvoiceList',component:InvoiceListComponent}     
+          
+          ])],
+    	
+    declarations: [AppComponent,OrderBy,VendorsComponent,SearchComponent,CustomersComponent,ProductsComponent,InvoiceComponent, InvoiceListComponent,  
+  HomeComponent],
+
     providers: [ProductService],
     bootstrap: [AppComponent]
 })

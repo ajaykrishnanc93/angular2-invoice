@@ -1,0 +1,345 @@
+<div *ngIf="!isEditing">
+<table  rules="rows" class="table" style="border-style: solid;border-color: #000000;background-color:#FBEEE6;"  >
+<thead >
+<tr>
+    <th style=" background-color: hsla(48, 1%, 95%, 0.4);">InvoiceName</th>
+  <th  style=" background-color: hsla(48, 1%, 95%, 0.4);">InvoiceNumber</th>
+    <th style=" background-color: hsla(48, 1%, 95%, 0.4);">Actions</th>
+</tr>
+</thead>
+ <tbody > 
+ <tr *ngFor="let invoice of invoices | orderBy : ['name']">
+          <td style=" background-color: hsla(48, 1%, 95%, 0.4);">{{invoice.name}}</td>
+          <td style=" background-color: hsla(48, 1%, 95%, 0.4);" >{{invoice.invoiceNumber}}</td>
+          <td style=" background-color: hsla(48, 1%, 95%, 0.4);">
+      <button  (click)="enableEditing(invoice)"> Edit</button> <button  (click)="submitRemove(product)"><i></i>Delete</button>
+          </td>
+        </tr> 
+      </tbody>
+      </table>
+</div>
+
+<div *ngIf="isEditing">
+
+<div style="text-align:center;font-weight: 900;font-size: 25px;color:#000080;">
+ INVOICE
+</div>
+
+<form #form="ngForm" (ngSubmit)="submitEdit(invoice)">
+   <div class="form-group"  id="wrapper" style="font-weight: 600;font-size: 15px;" >
+            <input type="text" style="border:none;width:200px" class="form-control" name="name" [(ngModel)]="invoice.name" placeholder="Name"><br/>
+            <input type="text" style="border:none;width:200px" class="form-control" name="email" [(ngModel)]="invoice.email" placeholder="Email">
+
+  </div>
+
+  <div id="wrapper" style="overflow:auto;">
+      <div  class="form-group" style="float:right;font-weight: 600;font-size: 15px;width:200px;">
+            <input  type="text" style="border:none;width:200px;" class="form-control" name="inumber" [(ngModel)]="invoice.invoiceNumber" placeholder="Invoice Number">
+     </div>
+ </div>
+  
+ <div class="card" style="border-style: solid;border-color: #000000;background-color:#FBEEE6;" >
+    <!--  <h4 class="card-header">Current items:{{myForm.controls.products.controls.length}} </h4>  --> 
+   
+     <div class="card-block" >
+       <table class="table table-bordered table-striped">
+         <thead class="thead-default">
+           <tr  >
+             <th style="background-color:#FA8072;">ProductName</th>
+             <th style="background-color:#FA8072;">Quantity</th>
+             <th style="background-color:#FA8072;">Cost</th>
+             <th style="background-color:#FA8072;">Total</th>
+             <th style="background-color:#FA8072;"></th>
+           </tr>
+         </thead>
+       <tbody>
+      
+  <tr style=" background-color: hsla(48, 1%, 95%, 0.4);"  *ngFor="let product of invoice.products; let i=index">
+              
+               <td   style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                   <input list="products" class="form-control" type="text" name="{{'productName'+i}}" [(ngModel)]="product.productName"  (blur)="onBlurMethod(i)">
+           </td>
+             
+              <td  style=" background-color:hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input class="form-control" type="number" name="{{'quantity'+i}}" [(ngModel)]="product.quantity" (blur)="BlurMethod(i)" >
+             <datalist id="products">
+                    <option  *ngFor="let product of products" value={{product.pname}}>
+                    </datalist>
+             </td>
+             
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input class="form-control" type="number" name="{{'cost'+i}}"  [(ngModel)]="product.cost" placeholder="Rs.{{this.invoice.products[i].cost}}" placeholder="cost" >
+              </td>
+
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input class="form-control" type="number" name="{{'total'+i}}"  [(ngModel)]="product.total" placeholder="Rs.{{invoice.products[i].quantity*this.invoice.products[i].cost}}">
+              </td>
+
+               <td  style=" background-color: hsla(48, 1%, 95%, 0.4);">
+                  <!-- <button   type="button" class="btn btn-primary" [disabled]="!myForm.controls.products.valid" (click)="addProduct(i)" >Add</button> --> <button type="button" class="btn btn-primary"  type="button"  (click)="removeProduct(product)" >Remove</button>
+             </td>  
+          </tr>
+ 
+  
+
+<!--  <tr style=" background-color: hsla(48, 1%, 95%, 0.4);"  formArrayName="products" [formGroupName]="n" *ngFor="let product of myForm.controls.products.controls; let n =index">
+               <td   style=" background-color:hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input  list="products" type="text" class="form-control" formControlName="productName" placeholder="Product" (blur)="onBlurMethod(n)">
+                    <datalist id="products">
+                    <option  *ngFor="let product of products" value={{product.pname}}>
+                    </datalist>
+           <small *ngIf="!myForm.controls.products.controls[n].controls.productName.valid" class="text-danger">
+              Name is required.
+            </small> 
+           </td>
+             <td  style=" background-color:hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input  type="number" class="form-control" formControlName="quantity" placeholder="Quantity" (blur)="BlurMethod(n)" >
+               <small *ngIf="!myForm.controls.products.controls[n].controls.quantity.valid" class="text-danger">
+                      Quantity is required.
+                </small> 
+             </td>
+             
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input style="text-align:right;"  type="number" class="form-control" formControlName="cost" placeholder="Rs.{{this.myForm.value.products[n].cost}}" placeholder="Product" >
+              </td>
+
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input style="text-align:right;" type="number" class="form-control" formControlName="total"  placeholder="Rs.{{myForm.value.products[n].quantity*this.myForm.value.products[n].cost}}">
+              </td>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);">
+                  <button   type="button" class="btn btn-primary" [disabled]="!myForm.controls.products.valid" (click)="addProduct(n)" >Add</button> <button type="button" class="btn btn-primary" *ngIf="myForm.controls.products.controls.length> 1" type="button"  (click)="removeProduct(n)" >Remove</button>
+             </td>
+          </tr>   
+ -->
+
+</tbody>
+     </table>
+
+     
+     <table style="width:300px; margin-top:10px;margin-left:577px " class="table-responsive">
+        <tr>
+              <td  style="background-color:hsla(48, 1%, 95%, 0.4);font-weight:600;font-size: 15px;text-align:right;">Total Cost:
+              </td>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);">
+                <div class="form-group" id="wrapper" style="text-align:left;font-weight: 600;font-size: 15px;width:200px">
+                  <input type="number" class="form-control"  autocorrect="off" autocapitalize="off" style="border:none;  background-color: hsla(48, 1%, 95%, 0.4);text-align:right;" name="tcost" [(ngModel)]="invoice.totalCost" placeholder="Rs.{{getTotal()}}">
+               </div>
+              </td>
+       </tr>
+       <tr>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);font-weight: 600;font-size: 15px; text-align:right;">Tax:
+              </td>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4); ">
+                <div class="form-group" id="wrapper" style="text-align:left;font-weight: 600;font-size: 15px;width:200px">
+                    <input type="number" class="form-control"  autocorrect="off" autocapitalize="off" style="border:none;  background-color: hsla(48, 1%, 95%, 0.4);text-align:right;" name="tax" [(ngModel)]="invoice.tax" placeholder="10%"> 
+               </div> 
+              </td> 
+       </tr> 
+       <tr> 
+              <td  style="background-color: hsla(48, 1%, 95%, 0.4);font-weight: 600;font-size: 15px;text-align:right;">GrandTotal: 
+              </td> 
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4); ">
+                <div class="form-group" id="wrapper" style="text-align:left;font-weight: 600;font-size: 15px;width:200px"> 
+                   <input type="number" class="form-control"  autocorrect="off" autocapitalize="off" style="border:none;                background-color: hsla(48, 1%, 95%, 0.4);text-align:right;" name="gTotal" [(ngModel)]="invoice.grandTotal" placeholder=" Rs.{{this.invoice.totalCost+this.invoice.totalCost*(10/100)}}">
+                </div>
+              </td>
+       </tr>
+     </table>
+    </div>
+  </div>
+ <div class="margin-20" >
+          <button  type="submit" class="btn btn-primary pull-right" >Submit</button>
+  </div>
+  <div class="clearfix"></div>
+
+ <!-- <div class="margin-20">
+          <div>myForm details:-</div>
+          <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
+          <pre>form value: <br>{{myForm.value | json}}</pre>
+        </div> -->
+      
+
+</form>  
+
+
+
+
+
+
+
+
+
+
+import {Component, OnInit} from '@angular/core';
+import {Http, Headers, RequestOptions} from '@angular/http';
+import 'rxjs/Rx';
+import { Validators } from '@angular/forms';
+import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
+
+import {  FormControl }  from '@angular/forms';
+import { Customer } from './customer.interface';
+
+@Component({
+  selector: 'invoiceList',
+  templateUrl: 'app/invoiceList.html',
+
+})
+
+export class InvoiceListComponent implements OnInit {
+public myForm: FormGroup;
+private products = [];
+
+private seas=[];
+private docs=[];
+invoice={};
+private invoices = [];
+private options = new RequestOptions(
+  { 
+  headers: new Headers(
+  { 
+  'Content-Type': 'application/json',
+   'charset': 'UTF-8' })
+   });
+ 
+private isEditing = false;
+
+
+
+
+
+
+constructor(private http: Http,private _fb: FormBuilder) {
+  }
+
+
+ ngOnInit() {
+this.loadInvoices();
+this.loadProducts();
+}
+
+
+
+  loadInvoices() {
+    this.http.get("/docs").map(res => res.json()).subscribe(
+      data => this.invoices = data,
+      error => console.log(error)
+    );
+  }
+
+ enableEditing(invoice) {
+    this.isEditing = true;
+    this.invoice = invoice;
+    this.myForm = this._fb.group({
+            name: ['', [Validators.required, Validators.minLength(2)]],
+             email: ['', [Validators.required, Validators.minLength(2)]],
+              invoiceNumber: ['', [Validators.required, Validators.minLength(1)]],
+               totalCost: ['', [Validators.minLength(0)]],
+             tax: ['',[Validators.minLength(1)]],
+              grandTotal: ['', [Validators.minLength(2)]],
+            products: this._fb.array([
+                this.initProduct(),
+            ])
+        }); 
+
+}
+
+
+initProduct() {
+        return this._fb.group({
+            productName: [''],
+            quantity: [''],
+            cost:[''],
+            total:['']
+        });
+    }
+
+    addProduct(n) {
+       const control = <FormArray>this.myForm.controls['products'];
+        control.push(this.initProduct());
+
+}
+
+  
+
+    save(model: Customer) {
+     
+        console.log(model);
+   this.http.post("/doc", JSON.stringify(this.myForm.value), this.options).subscribe(
+      res => {
+        this.docs.push(res.json()); 
+        },
+      error => console.log(error)
+    );       
+    }
+
+
+loadProducts(){
+    this.http.get("/products").map(res => res.json()).subscribe(
+      data => this.products = data,
+      error => console.log(error)
+    );
+  }
+ 
+ onBlurMethod(i){
+  this.http.get("/productssss/"+this.invoice.products[i].productName).map(res => res.json()).subscribe(
+      data =>{ this.seas = data;
+    
+       this.invoice.products[i].cost=this.seas.pcost;
+        },
+      error => console.log(error)
+   );
+}
+
+
+BlurMethod(i){
+  this.http.get("/productssss/"+this.invoice.products[i].productName).map(res => res.json()).subscribe(
+      data =>{ this.seas = data;
+    this.invoice.products[i].cost=this.seas.pcost;
+       this.invoice.products[i].total=this.seas.pcost*this.invoice.products[i].quantity;
+        
+        },
+      error => console.log(error)
+   );
+
+}
+
+ getTotal(){
+   var total = 0;
+   for(var i = 0; i <this.invoice.products.length; i++){
+        var product = this.invoice.products[i];
+        total += (product.quantity * product.cost);
+    this.invoice.totalCost=total;
+ this.invoice.tax=10;
+    this.invoice.grandTotal=this.invoice.totalCost+this.invoice.totalCost*(this.invoice.tax/100)
+    }
+    return total;
+  } 
+
+submitEdit(invoice) {
+    this.http.put("/doc/"+invoice._id, JSON.stringify(invoice), this.options).subscribe(
+      res => {
+        this.isEditing = false;
+        this.invoice = invoice;
+        },
+      error => console.log(error)
+    );
+  
+  }
+
+removeProduct(product){
+  alert(product._id);
+  var delOptions = new RequestOptions({
+      body: '', 
+      headers: new Headers({ 'Content-Type': 'application/json', 'charset': 'UTF-8' })}
+    );
+this.http.put("/docss/"+product._id, delOptions).subscribe(
+        res => {
+          var pos = this.invoice.products.map((e) => { return e._id }).indexOf(product._id);
+          this.invoice.products.splice(pos, 1);
+          },
+        error => console.log(error)
+      );
+    }
+}
+
+

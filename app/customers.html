@@ -1,0 +1,98 @@
+  <div>
+    <p><button style="float: right;" *ngIf="!isEditing && !isSearching && !isAdding " (click)="enableAdding()"> Add</button></p>  
+    <!--  <p><search  *ngIf="!isAdding && !isEditing" [(names)]="name"></search></p> -->
+	 
+	<!-- <p><button  *ngIf="!isAdding && !isEditing " (click)="enableSearching(name)"> Find</button></p> -->
+
+
+    
+    <table   rules=rows class="table"  >
+			<thead *ngIf="!isEditing && !isAdding ">
+				
+				<tr>
+					<th style="background-color: rgba(255, 0, 0, 0.2);">CustomerName</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.3);">CustomerPlace</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.4);">CustomerPhone</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.4);">CustomerEmail</th>
+					<th  style="background-color: rgba(255, 0, 0, 0.5);">Actions</th>
+				</tr>
+			</thead>
+			<tbody *ngIf="customers.length === 0 && !isMap" >
+				<tr><td *ngIf="!isAdding" colspan="4">There are no customers currently</td></tr>	
+			</tbody>
+
+			 <tbody *ngIf="!isEditing && !isSearching  && !isAdding " > 
+				<tr *ngFor="let customer of customers | orderBy : ['cname']">
+					<td >{{customer.cname}}</td>
+					<td >{{customer.cplace}}</td>
+					<td >{{customer.cphone}}</td>
+					<td >{{customer.cemail}}</td>
+					<td >
+			<button  (click)="enableEditing(customer)"> Edit</button> <button   (click)="submitRemove(customer)"><i  ></i> Delete</button>
+					</td>
+				</tr>	
+			</tbody>
+			
+  <tbody *ngIf="isSearching" >
+				<tr *ngFor="let customer of customers  | orderBy : ['cname']">
+					<td>{{customer.cname}}</td>
+					<td>{{customer.cplace}}</td>
+					<td>{{customer.cphone}}</td>
+					<td>{{customer.cemail}}</td>
+					<td>
+	<button  (click)="enableEditing(customer)"> Edit</button> <button   (click)="submitRemove(customer)"><i ></i> Delete</button>
+					</td>
+				</tr>	
+			</tbody> 
+
+<form *ngIf="isEditing">
+				
+					
+					<form  #form="ngForm" (ngSubmit)="submitEdit(customer)">
+					   <div class="form-group">
+							 <input class="form-control" type="text" name="name" [(ngModel)]="customer.cname" placeholder="Name" required>
+						</div>
+						<div class="form-group">
+							<input class="form-control" type="text" name="place" [(ngModel)]="customer.cplace" placeholder="Place"  required>
+						</div>
+						<div  class="form-group">
+							<input class="form-control" style="width:250px;" type="long int" name="phone" [(ngModel)]="customer.cphone" placeholder="Phone"  min="0" required>
+						</div>
+						<div  class="form-group">
+							<input class="form-control" style="width:250px;" type="email" name="email" [(ngModel)]="customer.cemail" placeholder="Email"  min="0" required>
+						</div>
+							<button  type="submit" [disabled]="!form.form.valid"> Save</button> <button  (click)="cancelEditing()"> Cancel</button>
+					</form>
+						
+					
+				
+</form>
+		
+ 
+  
+
+  <form  *ngIf="isAdding"  [formGroup]="addCustomerForm" (ngSubmit)="submitAdd()">
+			<div  class="form-group">
+			    <input  class="form-control" type="text" name="cname" formControlName="cname" placeholder="Name"  >
+		
+			</div>
+			<div class="form-group">
+				<input class="form-control" type="text" name="cplace" formControlName="cplace" placeholder="Place"  >
+	
+			</div>
+			<div class="form-group">
+				<input style="width:250px;" class="form-control" type="long int" name="cphone" formControlName="cphone" placeholder="Phone" >
+			</div>
+			<div class="form-group">
+				<input class="form-control" type="text" name="cemail" formControlName="cemail" placeholder="Email"  >
+	
+			</div>
+		<button  type="submit" [disabled]="!addCustomerForm.valid"> Add</button>
+		 <button  (click)="cancelAdd()"> Cancel</button>
+		</form>
+		</table> 
+
+	     <button  *ngIf="isSearching"(click)="cancelSearch()"> Cancel</button> 
+	  
+	</div>  
+

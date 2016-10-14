@@ -14,7 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 var routes = require('./routes');
+
 app.use('/', routes);
+
 
  app.listen(app.get('port'), function() {
         console.log('MEAN app listening on port '+app.get('port'));

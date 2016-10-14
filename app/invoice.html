@@ -1,0 +1,120 @@
+
+
+<div style="text-align:center;font-weight: 900;font-size: 25px;color:#000080;">
+ INVOICE
+</div>
+
+<form [formGroup]="myForm" novalidate (ngSubmit)="save(myForm)">
+   <div class="form-group"  id="wrapper" style="font-weight: 600;font-size: 15px;" >
+            <input type="text" style="border:none;width:200px" class="form-control" formControlName="name" placeholder="Name"><br/>
+            <input type="text" style="border:none;width:200px" class="form-control" formControlName="email" placeholder="Email">
+  </div>
+
+  <div id="wrapper" style="overflow:auto;">
+      <div  class="form-group" style="float:right;font-weight: 600;font-size: 15px;width:200px;">
+            <input  type="text" style="border:none;width:200px;" class="form-control" formControlName="invoiceNumber" placeholder="Invoice Number">
+     </div>
+ </div>
+  
+ <div class="card" style="border-style: solid;border-color: #000000;background-color:#FBEEE6;" >
+     <h4 class="card-header">Current items:{{myForm.controls.products.controls.length}} </h4>  
+    
+     <div class="card-block" >
+       <table formArrayName="products" class="table table-bordered table-striped">
+         <thead class="thead-default">
+           <tr  >
+             <th style="background-color:#FA8072;">ProductName</th>
+             <th style="background-color:#FA8072;">Quantity</th>
+             <th style="background-color:#FA8072;">Cost</th>
+             <th style="background-color:#FA8072;">Total</th>
+             <th style="background-color:#FA8072;"></th>
+           </tr>
+         </thead>
+       
+         <tbody>
+           <tr style=" background-color: hsla(48, 1%, 95%, 0.4);" [formGroupName]="i" *ngFor="let product of myForm.controls.products.controls; let i=index">
+               <td   style=" background-color: hsla(48, 1%, 95%, 0.4); " class="form-group">
+                  <input  list="products" type="text" class="form-control" formControlName="productName" placeholder="Product" (blur)="onBlurMethod(i)">
+                    <datalist id="products">
+                    <option  *ngFor="let product of products" value={{product.pname}}>
+                    </datalist>
+           <small *ngIf="!myForm.controls.products.controls[i].controls.productName.valid" class="text-danger">
+              Name is required.
+            </small> 
+           </td>
+             
+              <td  style=" background-color:hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input  type="number" class="form-control" formControlName="quantity" placeholder="Quantity" (blur)="BlurMethod(i)" >
+           <small *ngIf="!myForm.controls.products.controls[i].controls.quantity.valid" class="text-danger">
+             Quantity is required.
+            </small> 
+             </td>
+             
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input style="text-align:right;"  type="number" class="form-control" formControlName="cost" placeholder="Rs.{{this.myForm.value.products[i].cost}}" placeholder="Product" >
+              </td>
+
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);" class="form-group">
+                  <input style="text-align:right;" type="number" class="form-control" formControlName="total"  placeholder="Rs.{{myForm.value.products[i].quantity*this.myForm.value.products[i].cost}}">
+              </td>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);">
+                  <button   type="button" class="btn btn-primary" [disabled]="!myForm.controls.products.valid" (click)="addProduct(i)" >Add</button> <button type="button" class="btn btn-primary" *ngIf="myForm.controls.products.controls.length> 1" type="button"  (click)="removeProduct(i)" >Remove</button>
+             </td>
+          </tr>
+        </tbody>
+     </table>
+
+     <table style="width:300px; margin-top:10px;margin-left:577px " class="table-responsive">
+        <tr>
+              <td  style="background-color:hsla(48, 1%, 95%, 0.4);font-weight:600;font-size: 15px;text-align:right;">Total Cost:
+              </td>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);">
+                <div class="form-group" id="wrapper" style="text-align:left;font-weight: 600;font-size: 15px;width:200px">
+                  <input type="number" class="form-control"  autocorrect="off" autocapitalize="off" style="border:none;  background-color: hsla(48, 1%, 95%, 0.4);text-align:right;" formControlName="totalCost" placeholder="Rs.{{getTotal()}}">
+               </div>
+              </td>
+       </tr>
+       <tr>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4);font-weight: 600;font-size: 15px; text-align:right;">Tax:
+              </td>
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4); ">
+                <div class="form-group" id="wrapper" style="text-align:left;font-weight: 600;font-size: 15px;width:200px">
+                    <input type="number" class="form-control"  autocorrect="off" autocapitalize="off" style="border:none;  background-color: hsla(48, 1%, 95%, 0.4);text-align:right;" formControlName="tax" placeholder="10%"> 
+               </div> 
+              </td> 
+       </tr> 
+       <tr> 
+              <td  style="background-color: hsla(48, 1%, 95%, 0.4);font-weight: 600;font-size: 15px;text-align:right;">GrandTotal: 
+              </td> 
+              <td  style=" background-color: hsla(48, 1%, 95%, 0.4); ">
+                <div class="form-group" id="wrapper" style="text-align:left;font-weight: 600;font-size: 15px;width:200px"> 
+                   <input type="number" class="form-control"  autocorrect="off" autocapitalize="off" style="border:none;                background-color: hsla(48, 1%, 95%, 0.4);text-align:right;" formControlName="grandTotal" placeholder=" Rs.{{this.myForm.value.totalCost+this.myForm.value.totalCost*(10/100)}}">
+                </div>
+              </td>
+       </tr>
+     </table>
+    </div>
+  </div>
+ <div class="margin-20" >
+          <button  [routerLink]="['/']" type="button"  (click)="save(myForm)" class="btn btn-primary pull-right" [disabled]="!myForm.valid">Submit</button>
+  </div>
+  <div class="clearfix"></div>
+
+ <!-- <div class="margin-20">
+          <div>myForm details:-</div>
+          <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
+          <pre>form value: <br>{{myForm.value | json}}</pre>
+        </div> -->
+      
+
+
+      
+      </form>  
+
+
+
+
+
+
+
+
