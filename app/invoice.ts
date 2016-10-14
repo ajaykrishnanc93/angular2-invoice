@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
 
 import {  FormControl }  from '@angular/forms';
-import { Customer } from './customer.interface';
+import { Invo } from './invo.interface';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import 'rxjs/Rx';
 @Component({
@@ -66,7 +66,7 @@ private options = new RequestOptions(
         control.removeAt(i);
     }
 
-    save(model: Customer) {
+    save(model: Invo) {
      
         console.log(model);
    this.http.post("/doc", JSON.stringify(this.myForm.value), this.options).subscribe(
